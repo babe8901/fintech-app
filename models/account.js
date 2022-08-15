@@ -23,7 +23,11 @@ const accountSchema = mongoose.Schema({
     },
     description: {
         type: String
-    }
+    },
+    date: {
+        type: Date,
+        default: Date.now
+    },
 })
 
 module.exports = mongoose.model('Accounts', accountSchema)

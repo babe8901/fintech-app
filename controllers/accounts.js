@@ -4,7 +4,7 @@ const Account = require('../models/account')
 
 const getAllAccounts = async (req, res) => {
   try {
-    const accounts = Account.find({})
+    const accounts = await Account.find({})
     res.status(200).json({ accounts, nbHits: accounts.length })
   } catch (error) {
     throw new CustomAPIError('Cannot get all accounts')
@@ -13,7 +13,7 @@ const getAllAccounts = async (req, res) => {
 
 const getAccountById = async (req, res) => {
   try {
-    const account = Account.find({ _id: req.body.id })
+    const account = await Account.find({ _id: req.body.id })
     res.status(200).json({ account })
   } catch (error) {
     throw new CustomAPIError('Cannot get account', 201)
@@ -22,7 +22,7 @@ const getAccountById = async (req, res) => {
 
 const createAccount = async (req, res) => {
   try {
-    const { account } = req.body
+    const account = req.body
     const res = await Account.create(account)
     res.status(200).json({ account: res, msg: 'Account created successfully' })
   } catch (error) {
@@ -30,11 +30,20 @@ const createAccount = async (req, res) => {
   }
 }
 
-const deleteAccount = async (req, res) => {
+const deleteAccountById = async (req, res) => {
   try {
-    const { id } = req.body.id
-    await Account.deleteOne({ _id: id })
+    const { id } = req.body
+    await Account.findByIdAndDelete(id)
     res.status(200).json({ msg: `Account with id ${id} deleted successfully` })
+  } catch (error) {
+    throw new CustomAPIError('Some error occured. Account not deleted', 201)
+  }
+}
+
+const deleteAccounts = async (req, res) => {
+  try {
+    await Account.deleteMany({})
+    res.status(200).json({ msg: `Accounts deleted successfully` })
   } catch (error) {
     throw new CustomAPIError('Some error occured. Account not deleted', 201)
   }
@@ -42,7 +51,7 @@ const deleteAccount = async (req, res) => {
 
 const deactivateAccount = async (req, res) => {
   try {
-    const { id } = req.body.id
+    const { id } = req.body
     await Account.updateOne({ _id: id }, { status: false })
     res.status(200).json({ msg: `Account with id ${id} deactivated successfully` })
   } catch (error) {
@@ -52,7 +61,7 @@ const deactivateAccount = async (req, res) => {
 
 const activateAccount = async (req, res) => {
   try {
-    const { id } = req.body.id
+    const { id } = req.body
     await Account.updateOne({ _id: id }, { status: true })
     res.status(200).json({ msg: `Account with id ${id} activated successfully` })
   } catch (error) {
@@ -61,6 +70,7 @@ const activateAccount = async (req, res) => {
 }
 
 module.exports = {
-  createAccount, deleteAccount, deactivateAccount,
-  activateAccount, getAllAccounts, getAccountById
+  getAllAccounts, getAccountById, createAccount,
+  deleteAccounts, deleteAccountById, deactivateAccount,
+  activateAccount
 }

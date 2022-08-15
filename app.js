@@ -8,6 +8,7 @@ const connectDB = require('./db/connect')
 
 const mainRouter = require('./routes/main')
 const accountsRouter = require('./routes/accounts')
+const transactionsRouter = require('./routes/transactions')
 
 const notFoundMiddleware = require('./middleware/not-found')
 const errorHandlerMiddleware = require('./middleware/error-handler')
@@ -16,12 +17,11 @@ const errorHandlerMiddleware = require('./middleware/error-handler')
 app.use(express.static('./public'))
 app.use(express.json())
 
+app.get('/', (req, res) => res.status(200).send('hello'))
+
 app.use('/api/v1', mainRouter)
-
-
 app.use('/api/v1/accounts', accountsRouter)
-// app.use('/')
-
+app.use('/api/v1/transactions', transactionsRouter)
 
 // app.use(authenticationMiddleware)
 app.use(notFoundMiddleware)
