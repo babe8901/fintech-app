@@ -1,59 +1,72 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
-const userSchema = mongoose.Schema({
-  first_name: {
-    type: String,
-    required: [true, 'Please provide first name']
+const userSchema = mongoose.Schema(
+  {
+    first_name: {
+      type: String,
+      required: [true, "Please provide first name"],
+      maxlength: 20,
+    },
+    last_name: {
+      type: String,
+      required: [true, "Please provide last name"],
+      maxlength: 20,
+    },
+    mobile_no: {
+      type: String,
+      required: [true, "Please provide mobile number"],
+      match: [
+        "^(+91[-s]?)?[0]?(91)?[789]d{9}$",
+        "Please provide valid mobile number",
+      ],
+      unique: true,
+    },
+    email: {
+      type: String,
+      required: [true, "Please provide email id"],
+      match: [
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        "PLease provide valid email",
+      ],
+      unique: true,
+    },
+    user_profile_ref: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      // required: [true, "Please provide the user profile reference"],
+    },
+    password: {
+      type: String,
+      required: [true, "Please provide password"],
+    },
+    accounts: {
+      type: [mongoose.Types.ObjectId],
+    },
+    status: {
+      type: Boolean,
+      default: true,
+    },
   },
-  last_name: {
-    type: String,
-    required: [true, 'Please provide last name']
-  },
-  middle_name: {
-    type: String,
-  },
-  DOB: {
-    type: Date,
-    required: [true, 'Please provide aadhar id']
-  },
-  gender: {
-    type: String,
-    default: 'Do not want to specify'
-  },
-  mobile_no: {
-    type: String,
-    required: [true, 'Please provide mobile number']
-  },
-  email: {
-    type: String,
-    required: [true, 'Please provide email id']
-  },
-  aadhar_id: {
-    type: String,
-    required: [true, 'Please provide aadhar id']
-  },
-  pan_id: {
-    type: String,
-    required: [true, 'Please provide pan id']
-  },
-  passport_id: {
-    type: String,
-  },
-  password: {
-    type: String,
-    required: [true, 'Please provide password']
-  },
-  accounts: {
-    type: [String]
-  },
-  status: {
-    type: Boolean,
-    default: true
-  },
-  date: {
-    type: Date,
-    default: Date.now
-  },
-})
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('Users', userSchema)
+userSchema.pre("save", async function (next) {
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+userSchema.methods.createJWT = function () {
+  return jwt.sign({ userId: this.id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_LIFETIME,
+  });
+};
+
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  const isMatch = await bcrypt.compare(candidatePassword, this.password);
+  return isMatch;
+};
+
+module.exports = mongoose.model("User", userSchema);

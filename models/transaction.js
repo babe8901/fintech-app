@@ -1,40 +1,39 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
-const transactionSchema = new mongoose.Schema({
+const transactionSchema = new mongoose.Schema(
+  {
     code: {
-        type: String,
-        required: [true, 'Please provide transaction code']
+      type: String,
+      required: [true, "Please provide transaction code"],
     },
     from: {
-        type: String,
-        required: [true, 'Please provide origin of transaction']
+      type: mongoose.Types.ObjectId,
+      required: [true, "Please provide origin of transaction"],
     },
     to: {
-        type: String,
-        required: [true, 'Please provide destination of transaction']
+      type: mongoose.Types.ObjectId,
+      required: [true, "Please provide destination of transaction"],
     },
     amount: {
-        type: mongoose.Decimal128,
-        required: [true, 'Please provide an amount for the transaction']
+      type: mongoose.Decimal128,
+      required: [true, "Please provide an amount for the transaction"],
     },
     convenience_fees: {
-        type: mongoose.Decimal128,
-        default: 0
+      type: mongoose.Decimal128,
+      default: 0.0,
     },
     status: {
-        type: Boolean,
-        default: true
+      type: Boolean,
+      default: true,
     },
     comments: {
-        type: String
+      type: String,
     },
     tags: {
-        type: String
+      type: String,
     },
-    date: {
-        type: Date,
-        default: Date.now
-    },
-})
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('Transactions', transactionSchema)
+module.exports = mongoose.model("Transaction", transactionSchema);

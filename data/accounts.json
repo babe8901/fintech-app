@@ -1,0 +1,14 @@
+[
+    {
+        "number": "567812343456",
+        "type": "savings",
+        "user": "62faaed62a27d76ac6782452",
+        "balance": 15002.25
+    },
+    {
+        "number": "567812343457",
+        "type": "current",
+        "user": "62faaed62a27d76ac6782452",
+        "balance": 21234341.25
+    }
+]

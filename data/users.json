@@ -1,0 +1,30 @@
+[
+    {
+        "first_name": "Shivani",
+        "last_name": "Yadav",
+        "middle_name": "Ramjanam",
+        "DOB": "2006-10-25T00:00:00.000Z",
+        "gender": "female",
+        "mobile_no": "+91 9326020310",
+        "email": "shivaniyadavjb@gmail.com",
+        "aadhar_id": "1234 5678 9012",
+        "pan_id": "ABCDE7733N",
+        "password": "password",
+        "accounts": [],
+        "status": true
+    },
+    {
+        "first_name": "Shubham",
+        "last_name": "Yadav",
+        "middle_name": "Ramjanam",
+        "DOB": "2000-12-14T00:00:00.000Z",
+        "gender": "male",
+        "mobile_no": "+91 7977371171",
+        "email": "luckyshubham16@gmail.com",
+        "aadhar_id": "1234 5678 9012",
+        "pan_id": "ABCDE7733N",
+        "password": "password",
+        "accounts": [],
+        "status": true
+    }
+]

@@ -22,10 +22,11 @@ const getTransactionById = async (req, res) => {
 
 const createTransaction = async (req, res) => {
     try {
-        transaction = await Transaction.create(req.body)
-        res.status(200).json({ transaction })
+        transactions = await Transaction.create(req.body)
+        res.status(200).json({ transactions, nbHits: transactions.length })
     } catch (error) {
-        throw new CustomAPIError('Cannot create transaction', 201)
+        res.status(201).json({ error })
+        // throw new CustomAPIError('Cannot create transaction', 201)
     }
 }
 
@@ -48,7 +49,39 @@ const deleteTransactions = async (req, res) => {
     }
 }
 
+
+const deleteTransaction = async (req, res) => {
+    try {
+        const { id } = req.params
+        transation = await Transaction.findByIdAndDelete(id)
+        res.status(200).json({ transaction, msg: `transaction ${id} deleted successfully` })
+    } catch (error) {
+        throw new CustomAPIError('Cannot delete transaction', 201)
+    }
+}
+
+const getTransaction = async (req, res) => {
+    try {
+        transaction = await Transaction.findById(req.params.id)
+        res.status(200).json({ transaction })
+    } catch (error) {
+        throw new CustomAPIError('Cannot retrieve transaction', 201)
+    }
+}
+
+const updateTransaction = async (req, res) => {
+    try {
+        const { id } = req.params
+        console.log(id);
+        await Transaction.findByIdAndUpdate(id, req.body, { runValidators: true })
+        transaction = await Transaction.findById(id)
+        res.status(200).json({ transaction })
+    } catch (error) {
+        throw new CustomAPIError('Cannot update transaction', 201)
+    }
+}
+
 module.exports = {
-    getAllTransactions, getTransactionById, createTransaction,
-    deleteTransactions, deleteTransactionById
+    getAllTransactions, getTransaction, getTransactionById, createTransaction,
+    updateTransaction, deleteTransaction, deleteTransactions, deleteTransactionById
 }

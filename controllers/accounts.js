@@ -13,7 +13,7 @@ const getAllAccounts = async (req, res) => {
 
 const getAccountById = async (req, res) => {
   try {
-    const account = await Account.find({ _id: req.body.id })
+    const account = await Account.findById(req.body.id)
     res.status(200).json({ account })
   } catch (error) {
     throw new CustomAPIError('Cannot get account', 201)
@@ -23,18 +23,32 @@ const getAccountById = async (req, res) => {
 const createAccount = async (req, res) => {
   try {
     const account = req.body
-    const res = await Account.create(account)
-    res.status(200).json({ account: res, msg: 'Account created successfully' })
+    const result = await Account.create(account)
+    res.status(200).json({ account: result, msg: 'Account created successfully' })
   } catch (error) {
-    throw new CustomAPIError('Some error occured. Account not created', 201)
+    res.status(201).json({ error })
+    // throw new CustomAPIError('Some error occured. Account not created', 201)
+  }
+}
+
+const updateAccountById = async (req, res) => {
+  try {
+    const { id } = req.body
+    await Account.findByIdAndUpdate(id, req.body, { runValidators: true })
+    const account = await Account.findById(id)
+    res.status(200).json({ account, msg: 'Account updated successfully' })
+  } catch (error) {
+    res.status(201).json({ error })
+    // throw new CustomAPIError('Some error occured. Account not created', 201)
   }
 }
 
 const deleteAccountById = async (req, res) => {
   try {
     const { id } = req.body
-    await Account.findByIdAndDelete(id)
-    res.status(200).json({ msg: `Account with id ${id} deleted successfully` })
+    // check if the account exists before deleting
+    account = await Account.findByIdAndDelete(id)
+    res.status(200).json({ account, msg: `Account with id ${id} deleted successfully` })
   } catch (error) {
     throw new CustomAPIError('Some error occured. Account not deleted', 201)
   }
@@ -69,8 +83,41 @@ const activateAccount = async (req, res) => {
   }
 }
 
+const getAccount = async (req, res) => {
+  try {
+    const account = await Account.findById(req.params.id)
+    res.status(200).json({ account })
+  } catch (error) {
+    throw new CustomAPIError('Cannot get account', 201)
+  }
+}
+
+const deleteAccount = async (req, res) => {
+  try {
+    const { id } = req.params
+    // check if the account exists before deleting
+    account = await Account.findByIdAndDelete(id)
+    res.status(200).json({ account, msg: `Account with id ${id} deleted successfully` })
+  } catch (error) {
+    throw new CustomAPIError('Some error occured. Account not deleted', 201)
+  }
+}
+
+const updateAccount = async (req, res) => {
+  try {
+    const { id } = req.params
+    await Account.findByIdAndUpdate(id, req.body, { runValidators: true })
+    const account = await Account.findById(id)
+    res.status(200).json({ account, msg: 'Account updated successfully' })
+  } catch (error) {
+    res.status(201).json({ error })
+    // throw new CustomAPIError('Some error occured. Account not created', 201)
+  }
+}
+
 module.exports = {
-  getAllAccounts, getAccountById, createAccount,
+  getAllAccounts, getAccount, getAccountById, createAccount,
+  updateAccount, updateAccountById, deleteAccount,
   deleteAccounts, deleteAccountById, deactivateAccount,
   activateAccount
 }
